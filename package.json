@@ -1,6 +1,6 @@
 {
   "name": "express-userinfo",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Express middleware to retrieve OIDC userinfo",
   "main": "index.js",
   "scripts": {
