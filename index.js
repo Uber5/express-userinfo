@@ -12,12 +12,6 @@ module.exports = options => {
 
   debug('options', options)
 
-  const handleError = options.handleError || function(status, message) {
-    debug(`error, status=${ status }: ${ message }`)
-    res.status(status)
-    return next(message)
-  }
-
   let fetcher
   if (options.fetcher) {
     fetcher = options.fetcher
@@ -37,6 +31,13 @@ module.exports = options => {
   }
 
   return (req, res, next) => {
+
+    const handleError = options.handleError || function(status, message) {
+      debug(`error, status=${ status }: ${ message }`)
+      res.status(status)
+      return next(message)
+    }
+
     const token = getAccessToken(req)
     if (!token) return handleError(401, new Error('missing or invalid authorization header'))
     req.access_token = token
