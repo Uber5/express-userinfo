@@ -1,6 +1,6 @@
 {
   "name": "express-userinfo",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Express middleware to retrieve OIDC userinfo",
   "main": "index.js",
   "scripts": {
@@ -8,5 +8,7 @@
   },
   "author": "Chris Oloff <chris@uber5.com> (http://about.uber5.com/)",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "debug": "2.2.0"
+  }
 }
