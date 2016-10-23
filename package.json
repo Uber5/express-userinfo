@@ -1,0 +1,12 @@
+{
+  "name": "express-userinfo",
+  "version": "0.1.0",
+  "description": "Express middleware to retrieve OIDC userinfo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chris Oloff <chris@uber5.com> (http://about.uber5.com/)",
+  "license": "MIT",
+  "dependencies": {}
+}
