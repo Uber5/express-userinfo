@@ -10,22 +10,25 @@ userinfo](http://openid.net/specs/openid-connect-core-1_0.html#UserInfo).
 
 # How
 
+(Note: You need promises and ES6 support for `const` keyword; if this is an
+issue, it should be easy enough to downgrade; pull requests welcome.)
+
 Assuming an existing expressjs application, install this middleware
 
 ```bash
-npm install express-userinfo
+npm install express-userinfo isomorphic-fetch
 ```
 
 , then configure and use it in a route, e.g.
 
 ```javascript
-const userinfoMiddleware = require('express-userinfo')
+const expressUserinfo = require('express-userinfo')
 
-const getUserinfo = userinfoMiddleware({
+const getUserinfo = expressUserinfo({
   site: 'http://my-oidc-provider.com'
 })
 app.get('/something-with-userinfo', getUserinfo, (req, res, next) => {
-  res.send(`sub=${ req.userinfo.sub }`)
+  res.send(`sub=${ req.userinfo.sub }, token=${ req.access_token }`)
 })
 ```
 
