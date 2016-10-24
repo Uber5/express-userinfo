@@ -1,52 +1,60 @@
-const debug = require('debug')('express-userinfo')
+var debug = require('debug')('express-userinfo')
 
 function getAccessToken(req) {
-  const auth = req.get('authorization')
+  var auth = req.get('authorization')
   if (!auth) return undefined;
-  const match = auth.match(/^Bearer (.+)$/)
+  var match = auth.match(/^Bearer (.+)$/)
   if (match && match.length === 2 && match[1]) return match[1];
   return undefined
 }
 
-module.exports = options => {
+module.exports = function(options) {
 
   debug('options', options)
 
-  let fetcher
+  var fetcher
   if (options.fetcher) {
     fetcher = options.fetcher
   } else {
-    const fetch = require('isomorphic-fetch')
+    var fetch = require('isomorphic-fetch')
     if (!options.site) {
       throw new Error('options.site not given, but required. Alternatively, give options.fetcher')
     }
-    fetcher = token => {
+    fetcher = function(token) {
       return fetch(options.site + '/userinfo', {
         method: 'GET',
         headers: {
-          authorization: `Bearer ${ token }`
+          authorization: 'Bearer ' + token
         }
-      }).then(res => res.json())
+      }).then(function(res) {
+        debug('userinfo response, status=' + res.status)
+        if (res.status >= 300) {
+          return res.text().then(function(body) {
+            throw new Error('Unable to retrieve userinfo: ' + body)
+          })
+        }
+        return res.json()
+      })
     }
   }
 
-  return (req, res, next) => {
+  return function(req, res, next) {
 
-    const handleError = options.handleError || function(status, message) {
-      debug(`error, status=${ status }: ${ message }`)
+    var handleError = options.handleError || function(status, message) {
+      debug('error, status=' + status + ': ' + message)
       res.status(status)
       return next(message)
     }
 
-    const token = getAccessToken(req)
+    var token = getAccessToken(req)
     if (!token) return handleError(401, new Error('missing or invalid authorization header'))
     req.access_token = token
     fetcher(token)
-    .then(userinfo => {
+    .then(function(userinfo) {
       debug('userinfo', userinfo)
       req.userinfo = userinfo
       next()
     })
-    .catch(err => handleError(401, err))
+    .catch(function(err) { return handleError(401, err) })
   }
 }
